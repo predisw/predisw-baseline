@@ -11,9 +11,7 @@ public class TempT {
     public void test1(){
 
 
-        for(int i=0;i<0;i++){
-            System.out.println("if execute");
-        }
+        System.out.println(Long.MAX_VALUE);
 
 
     }

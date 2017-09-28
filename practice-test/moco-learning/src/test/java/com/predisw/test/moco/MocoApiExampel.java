@@ -17,6 +17,7 @@ public class MocoApiExampel {
     @Test
     public void should_response_as_expected() throws Exception {
         HttpServer server = httpServer(12306);
+
         server.response("foo");
 
         running(server, new Runnable() {

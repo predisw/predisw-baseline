@@ -6,7 +6,7 @@ import org.junit.runner.RunWith;
 
 
 @RunWith(Cucumber.class)
-@CucumberOptions(plugin = {"pretty","html:target/cucumber"})
+@CucumberOptions(plugin = {"pretty","html:target/cucumber","json:target/cucumber/report.json"})
 public class CukeRunner {
     // need to run command like this : mvn clean test -Dtest=CukeRunner
 }
