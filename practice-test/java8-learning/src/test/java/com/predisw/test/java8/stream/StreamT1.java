@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class StreamT1 {
@@ -23,6 +24,17 @@ public class StreamT1 {
 
     }
 
+
+    @Test
+    public void IntStreamT(){
+
+        IntStream.of(new int[]{1,3,5}).forEach(System.out::println);
+
+        System.out.println("-----");
+
+        IntStream.rangeClosed(1,10).limit(5).map(x -> {return x+1;}).forEach(System.out::println);
+
+    }
 
 
 }
