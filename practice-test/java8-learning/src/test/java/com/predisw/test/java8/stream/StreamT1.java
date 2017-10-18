@@ -5,8 +5,12 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import java.util.stream.IntStream;
+
 import java.util.stream.Stream;
 
 public class StreamT1 {
@@ -84,5 +88,17 @@ public class StreamT1 {
             return name;
         }
     }
+
+    public void IntStreamT(){
+
+        IntStream.of(new int[]{1,3,5}).forEach(System.out::println);
+
+        System.out.println("-----");
+
+        IntStream.rangeClosed(1,10).limit(5).map(x -> {return x+1;}).forEach(System.out::println);
+
+    }
+
+
 
 }
