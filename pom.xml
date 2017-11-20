@@ -7,6 +7,9 @@
 	<groupId>com.predisw</groupId>
     <artifactId>predisw-baseline</artifactId>
 	<version>1.0.0</version>
+    <modules>
+        <module>forOne</module>
+    </modules>
     <packaging>pom</packaging>
 
     <properties>
@@ -615,7 +618,7 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>${guava-version}</version>
+                <version>${guava.version}</version>
             </dependency>
 
 
