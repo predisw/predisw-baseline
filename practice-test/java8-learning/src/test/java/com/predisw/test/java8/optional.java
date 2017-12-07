@@ -2,6 +2,8 @@ package com.predisw.test.java8;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -28,6 +30,32 @@ public class optional {
         int length2 = Optional.of(ifNull).map(noNull-> noNull.length()).get();
 
         System.out.println(length2);
+
+    }
+
+
+    @Test
+    public void OptionalGetValue(){
+
+        Optional<String> testOp = Optional.ofNullable("test");
+
+        String testStr = testOp.orElseThrow(NullPointerException::new);
+
+        System.out.println(testStr);
+
+    }
+
+    @Test
+    public void ifNotExistThrowException(){
+
+        List<String> list1 = new ArrayList<>();
+        list1.add("1");
+
+        list1.stream().filter(e->e.equals("1"))
+                .findFirst().map( e ->{
+                    System.out.println(e);
+                    return "";
+        }).orElseThrow(()->new NullPointerException("element equal 1 doesn't exists"));
 
     }
 }
