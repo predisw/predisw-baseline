@@ -28,7 +28,7 @@ public class StreamT1 {
             return x;
         }).forEach(System.out::println);
 
-        System.out.println(numbers);
+        System.out.println(numbers); //output [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 
         numbers.stream().filter((x) -> {
@@ -36,7 +36,7 @@ public class StreamT1 {
         }).findFirst()
                 .ifPresent(x-> {x = x*x;});
 
-        System.out.println(numbers);
+        System.out.println(numbers); //output [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
     }
 
@@ -56,21 +56,24 @@ public class StreamT1 {
         }).map((x) -> {
             x.value = x.value*2;
             return x;
-        }).forEach(System.out::println);
+        }); // output [1,2]
+        //.forEach(System.out::println); after append this then output [1,4]
 
         System.out.println(numbers);
 
-
-
-        numbers.stream().filter((x) -> {
+        IntegerT c,d;
+        c = new IntegerT(3);
+        d = new IntegerT(4);
+        List<IntegerT> listCD = Arrays.asList(c,d);
+        listCD.stream().filter((x) -> {
             return x.value % 2 == 0;
         }).map((x) -> {
             x = new IntegerT(x.value*3);
             return x;
 
-        }).forEach(System.out::println);
+        }).forEach(System.out::println);  // output x*3 = 12
 
-        System.out.println(numbers);
+        System.out.println(listCD); // output [3,4] the input x will not be changed
 
 
     }
