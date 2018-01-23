@@ -20,13 +20,58 @@ public class StreamT1 {
     @Test
     public void filterAndMap(){
 
-        List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+        // can not change the base type value
+        List<Integer> numbers = Arrays.asList(new Integer(1), new Integer(2), 3, 4, 5, 6, 7, 8, 9, 10);
         Stream<Integer> stream = numbers.stream();
-        stream.filter((x) -> {
-            return x % 2 == 0;
-        }).map((x) -> {
-            return x * x;
+        stream.filter(x -> x %2 ==0).map((x) -> {
+            x= x * x;
+            return x;
         }).forEach(System.out::println);
+
+        System.out.println(numbers);
+
+
+        numbers.stream().filter((x) -> {
+            return x % 2 == 0;
+        }).findFirst()
+                .ifPresent(x-> {x = x*x;});
+
+        System.out.println(numbers);
+
+    }
+
+
+    @Test
+    public void filterAndMapObject(){
+
+        IntegerT a,b;
+
+        a = new IntegerT(1);
+        b = new IntegerT(2);
+
+        List<IntegerT> numbers = Arrays.asList(a,b);
+        Stream<IntegerT> stream = numbers.stream();
+        stream.filter((x) -> {
+            return x.value % 2 == 0;
+        }).map((x) -> {
+            x.value = x.value*2;
+            return x;
+        }).forEach(System.out::println);
+
+        System.out.println(numbers);
+
+
+
+        numbers.stream().filter((x) -> {
+            return x.value % 2 == 0;
+        }).map((x) -> {
+            x = new IntegerT(x.value*3);
+            return x;
+
+        }).forEach(System.out::println);
+
+        System.out.println(numbers);
+
 
     }
 
@@ -100,5 +145,18 @@ public class StreamT1 {
     }
 
 
+    class IntegerT{
+
+        public int value;
+
+        public IntegerT(int value){
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
 
 }
