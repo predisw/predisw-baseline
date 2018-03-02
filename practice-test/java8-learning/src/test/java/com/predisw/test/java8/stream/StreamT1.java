@@ -43,7 +43,6 @@ public class StreamT1 {
 
     @Test
     public void filterAndMapObject(){
-
         IntegerT a,b;
 
         a = new IntegerT(1);
@@ -61,6 +60,8 @@ public class StreamT1 {
 
         System.out.println(numbers);
 
+
+
         IntegerT c,d;
         c = new IntegerT(3);
         d = new IntegerT(4);
@@ -74,8 +75,6 @@ public class StreamT1 {
         }).forEach(System.out::println);  // output x*3 = 12
 
         System.out.println(listCD); // output [3,4] the input x will not be changed
-
-
     }
 
 

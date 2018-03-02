@@ -20,5 +20,9 @@ public class TempT<T extends MockitoT> {
 
 
         System.out.println(types.length + " "+types[0].getName());
+
+
+        System.out.println(String.class.getCanonicalName());
+
     }
 }
