@@ -7,14 +7,14 @@ import java.security.CodeSource;
 import java.security.ProtectionDomain;
 
 /**
- *use to confirm jar file of class
+ *use to confirm jar file of clazz
  */
 public class ClassLocationUtils {
 
     public static String where(final Class cls) {
         if (cls == null)throw new IllegalArgumentException("null input: cls");
         URL result = null;
-        final String clsAsResource = cls.getName().replace('.', '/').concat(".class");
+        final String clsAsResource = cls.getName().replace('.', '/').concat(".clazz");
         final ProtectionDomain pd = cls.getProtectionDomain();
         if (pd != null) {
             final CodeSource cs = pd.getCodeSource();

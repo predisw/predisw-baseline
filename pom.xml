@@ -4,12 +4,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.predisw</groupId>
+    <groupId>com.predisw</groupId>
     <artifactId>predisw-baseline</artifactId>
-	<version>1.0.0</version>
-    <modules>
-        <module>forOne</module>
-    </modules>
+    <version>1.0.0</version>
+    
+
     <packaging>pom</packaging>
 
     <properties>
@@ -32,6 +31,7 @@
         <protobuf-java.version>3.3.1</protobuf-java.version>
 
         <!-- Dependency versions (From SpringBoot) -->
+        <hikariCP.version>2.7.8</hikariCP.version>
         <activemq.version>5.14.5</activemq.version>
         <antlr2.version>2.7.7</antlr2.version>
         <appengine-sdk.version>1.9.53</appengine-sdk.version>
@@ -233,7 +233,7 @@
                         </execution>
                     </executions>
                     <configuration>
-                        <!--<mainClass>${start-class}</mainClass>-->
+                        <!--<mainClass>${start-clazz}</mainClass>-->
                     </configuration>
                 </plugin>
 
@@ -332,6 +332,11 @@
                 <artifactId>spring-boot-configuration-processor</artifactId>
                 <version>${spring-boot.version}</version>
                 <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-data-jpa</artifactId>
+                <version>${spring-boot.version}</version>
             </dependency>
 
             <!-- grpc -->
@@ -621,6 +626,16 @@
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
             </dependency>
+
+
+            <!-- database connecting pool-->
+            <dependency>
+                <groupId>com.zaxxer</groupId>
+                <artifactId>HikariCP</artifactId>
+                <version>${hikariCP.version}</version>
+            </dependency>
+
+
 
 
             <!--added by predisw-->
