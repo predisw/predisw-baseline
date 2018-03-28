@@ -1,5 +1,6 @@
 package com.predisw.test.practise.clazz;
 
+import com.sun.org.apache.xpath.internal.SourceTree;
 import org.junit.Test;
 
 public class ClassLoadingAndInitial {
@@ -7,7 +8,7 @@ public class ClassLoadingAndInitial {
 
 
     @Test
-    public void test1(){
+    public void testInitialOrder(){
 
         NotUsed notUsed = null; // won't be loaded if only declare
 
@@ -26,5 +27,13 @@ public class ClassLoadingAndInitial {
         NotUsedWithEagerInstance notUsed = NotUsedWithEagerInstance.getNotUsed();
 
     }
+
+    @Test
+    public void onlyStaticWillBeInitial(){
+
+        System.out.println(Parent.static_str); // only print non static block
+
+    }
+
 
 }
