@@ -5,7 +5,7 @@ import org.junit.Test;
 /**
  * Created by eggnwwg on 11/6/2017.
  */
-public class NullExceptionT {
+public class NullExceptionT extends ExceptionTImpl{
 
     @Test
     public void throwEmptyCommentException(){
@@ -15,5 +15,8 @@ public class NullExceptionT {
         }catch (Exception e){
             e.printStackTrace();
         }
+
+
+
     }
 }
