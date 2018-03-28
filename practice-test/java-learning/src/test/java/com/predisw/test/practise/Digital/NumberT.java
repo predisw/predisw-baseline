@@ -1,4 +1,4 @@
-package com.predisw.test.practise.Digital;
+package com.predisw.test.practise.digital;
 
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
