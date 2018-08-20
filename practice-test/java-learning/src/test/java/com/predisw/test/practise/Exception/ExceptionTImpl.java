@@ -11,8 +11,8 @@ public class ExceptionTImpl implements ExceptionT {
     public void testWithoutException()  {
 
         try {
-            throw new Exception("Interface doesn't declare exception but impl do");
-        } catch (Exception e) {
+            throw new IllegalStateException("Interface doesn't declare exception but impl do");
+        } catch (IllegalStateException | IllegalArgumentException e) {
             e.printStackTrace();
         }
     }

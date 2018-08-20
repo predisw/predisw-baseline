@@ -2,6 +2,9 @@ package com.predisw.test.java8.lambda;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import org.assertj.core.api.Assertions;
+import org.junit.Test;
 
 /**
  * Created by eggnwwg on 9/8/2017.
@@ -15,6 +18,25 @@ public class LambdaT1 {
 
         features.forEach((n)-> System.out.println(n));
     }
+
+
+    @Test
+    public void comparatorTest(){
+
+        int result = Objects.compare(new Integer(1000),new Long("1000"),(a,b)->{
+            if(a.intValue() > b.longValue()){
+                return 1;
+            }
+            if (a.intValue() == b.longValue()) {
+                return 0;
+            }
+            return -1;
+        });
+
+        Assertions.assertThat(result).isEqualTo(0);
+    }
+
+
 
 
 }

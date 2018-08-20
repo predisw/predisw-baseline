@@ -21,4 +21,23 @@ public class NumberT {
         Assertions.assertThat(1000L == 1000L);
     }
 
+
+    @Test
+    public void testIntegerCompare() {
+
+        Assertions.assertThat(new Integer(10) == new Integer(10));
+
+        Assertions.assertThat(new Integer(1000) != new Integer(1000));
+        // so better to use the equals method to compare
+
+        Assertions.assertThat(new Integer(20000)).isGreaterThan(10000);
+
+        Assertions.assertThat(new Integer(20000) > 10000).isTrue();
+
+        Assertions.assertThat(new Integer(20000) < 10000).isFalse();
+
+
+    }
+
+
 }

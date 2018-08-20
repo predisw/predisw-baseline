@@ -8,6 +8,7 @@ public class Plugin {
         System.out.println("INIT "+parameters);
     }
 
+    @Deprecated
     public void start(HashMap<String, String> parameters){
         System.out.println(parameters);
     }

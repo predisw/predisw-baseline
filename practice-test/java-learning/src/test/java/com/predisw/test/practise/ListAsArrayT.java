@@ -13,9 +13,11 @@ public class ListAsArrayT {
         List<String> strList = new ArrayList<>();
 
         strList.add("a");
-        strList.add("'b");
+        strList.add("b");
 
-        addListWithArray(strList.toArray(new String[1]));
+        System.out.println(strList.toString());
+
+     //   addListWithArray(strList.toArray(new String[1]));
 
 
     }

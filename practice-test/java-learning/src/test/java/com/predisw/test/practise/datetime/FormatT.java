@@ -31,24 +31,30 @@ public class FormatT {
         Assert.assertTrue(time_noTZ.compareTo(time_TZ07) == 0);
         Assert.assertTrue(time_TZ07.equals(time_TZ09));
 
-        System.out.println(time_noTZ);
+        System.out.println(time_noTZ.getTime());
         System.out.println(time_TZ07);
         System.out.println(time_TZ09);
+
+
+
     }
 
 
     @Test
-    public void OffsetDateTimeComparation(){
+    public void OffsetDateTimeComparation() {
 
         String timeStr1 = "2018-01-31T13:30:00+07:00";
         String timeStr2 = "2018-01-31T14:30:00+08:00";
-
+        String timeStr_TZ07 = "2018-01-31T13:30:00+07:00";
         OffsetDateTime time1 = OffsetDateTime.parse(timeStr1, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
         OffsetDateTime time2 = OffsetDateTime.parse(timeStr2, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
 
-        Assert.assertFalse("OffsetDateTime can not compare with equal",time1.equals(time2));
+        Assert.assertFalse("OffsetDateTime can not compare with equal", time1.equals(time2));
 
-        Assert.assertTrue("OffsetDateTime should compare with isEqual",time1.isEqual(time2));
+        Assert.assertTrue("OffsetDateTime should compare with isEqual", time1.isEqual(time2));
+
+        System.out.println(OffsetDateTime.parse(timeStr_TZ07, DateTimeFormatter.ISO_OFFSET_DATE_TIME).toInstant().toEpochMilli());
+
 
 
     }

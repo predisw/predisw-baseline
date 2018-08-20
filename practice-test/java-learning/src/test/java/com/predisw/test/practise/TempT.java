@@ -1,5 +1,6 @@
 package com.predisw.test.practise;
 
+import com.predisw.test.practise.clazz.ClassNewWithOverride;
 import org.junit.Test;
 
 import java.lang.reflect.TypeVariable;
@@ -57,4 +58,33 @@ public class TempT<T extends MockitoT> {
 
 
     }
+
+    @Test
+    public void testAny(){
+        System.out.println(String.class.isPrimitive());
+
+        System.out.println("abcde".indexOf("cd"));
+
+    }
+
+
+    @Test
+    public void testNewOverride(){
+
+        ClassNewWithOverride classNewWithOverride = new ClassNewWithOverride("xx");
+
+        ClassNewWithOverride classNewWithOverride2 = new ClassNewWithOverride("xx"){
+
+            @Override
+            public void setTest(){
+                System.out.println("no-changed");
+
+            }
+        };
+
+        System.out.println(classNewWithOverride2.getTest());
+
+    }
+
+
 }
