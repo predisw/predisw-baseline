@@ -11,6 +11,21 @@ import java.util.Optional;
  */
 public class optional {
 
+
+    @Test
+    public void OptionalNulltoMap(){
+
+        String isNull = null;
+
+        Optional result =  Optional.ofNullable(isNull).map(noNull -> noNull.length());
+
+        System.out.println(" what is result ?"+ result);
+        System.out.println(result.isPresent());
+
+    }
+
+
+
     @Test
     public void ifExistThenExeOrElseThrowEx(){
 
