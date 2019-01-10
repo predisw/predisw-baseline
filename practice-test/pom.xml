@@ -19,6 +19,7 @@
     <modules>
         <module>java-learning</module>
         <module>cucumber-learning</module>
+        <module>https-learning</module>
     </modules>
 
     <dependencies>

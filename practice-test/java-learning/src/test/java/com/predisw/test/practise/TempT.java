@@ -24,17 +24,20 @@ public class TempT<T extends MockitoT> {
 
     public static void main(String [] args){
 
+        System.out.println("3168".equals(3168));
 
-        System.out.println(Long.MAX_VALUE);
-        System.out.println((long)(Integer.MAX_VALUE)*2);
-
-        TypeVariable[] types =  TempT.class.getTypeParameters();
-
-
-        System.out.println(types.length + " "+types[0].getName());
-
-
-        System.out.println(String.class.getCanonicalName());
+        System.out.println(Integer.valueOf(3168).equals(3168));
+//
+//        System.out.println(Long.MAX_VALUE);
+//        System.out.println((long)(Integer.MAX_VALUE)*2);
+//
+//        TypeVariable[] types =  TempT.class.getTypeParameters();
+//
+//
+//        System.out.println(types.length + " "+types[0].getName());
+//
+//
+//        System.out.println(String.class.getCanonicalName());
 
     }
 
