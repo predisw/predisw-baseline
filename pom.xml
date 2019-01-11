@@ -298,6 +298,27 @@
             <artifactId>guava</artifactId>
             <version>${guava.version}</version>
           </dependency>
+          <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
+            <classifier>javadoc</classifier>
+          </dependency>
+          <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
+            <classifier>sources</classifier>
+          </dependency>
+
+
+          <dependency>
+              <groupId>javax.servlet</groupId>
+              <artifactId>javax.servlet-api</artifactId>
+               <version>${servlet-api.version}</version>
+              <scope>provided</scope>
+           </dependency>
+
 
           <!-- http -->
           <dependency>
