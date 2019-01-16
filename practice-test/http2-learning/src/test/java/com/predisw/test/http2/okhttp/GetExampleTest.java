@@ -40,6 +40,15 @@ public class GetExampleTest {
         example.runSyncGet("https://localhost:5000/");
     }
 
+
+    @Test
+    public void getSyncGetToHttp2TestDemo() throws IOException {
+        // using default truststore
+        GetExample example = new GetExample();
+        example.runSyncGet("https://http2.akamai.com/demo");
+    }
+
+
     @Test
     public void getAsyncGet1() throws IOException, InterruptedException {
         GetExample example = new GetExample();
@@ -57,5 +66,14 @@ public class GetExampleTest {
         Thread.sleep(3000);
     }
 
+
+
+    @Test
+    public void getAsyncGetToHttp2TestDemo() throws IOException, InterruptedException {
+        // using default truststore
+        GetExample example = new GetExample();
+        example.runAsyncGet("https://http2.akamai.com/demo");
+        Thread.sleep(10000);
+    }
 
 }

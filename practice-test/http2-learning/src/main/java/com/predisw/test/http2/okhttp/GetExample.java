@@ -42,6 +42,7 @@ public class GetExample {
                 System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
             }
 
+            System.out.println("Protocol: " + response.protocol());
             System.out.println(response.body().string());
         }
     }
