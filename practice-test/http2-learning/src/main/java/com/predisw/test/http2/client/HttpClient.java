@@ -2,9 +2,10 @@ package com.predisw.test.http2.client;
 
 import java.io.IOException;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import javax.annotation.Nullable;
-import okhttp3.Authenticator;
 import okhttp3.Call;
 import okhttp3.Credentials;
 import okhttp3.Dispatcher;
@@ -14,34 +15,36 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import okhttp3.Route;
+import okhttp3.internal.Util;
 
 public class HttpClient {
 
-    //1. how to set MediaType to request ?
+    //1. how to set MediaType/username/pw to request ?
     //2. how to set custom header to request ?
     //3. set authentication info to request if not null on build chain ?
-    //4. how to retry
-    //5. gather configuration by ClientConfig class
+    //4. how to retry !!
+    //5. gather configuration by HttpClientConfig class
     //6. adapter okHttp response to custom httpResponse.
-    //7. custom thread pool for dispatch ??
+    //7. relation between http request number and thread count  !!
 
     public static final MediaType MEDIA_TYPE_JSON
             = MediaType.parse("application/json; charset=utf-8");
 
     private OkHttpClient client;
 
-    private String userName;
-    private String password;
+    public HttpClient(HttpClientConfig httpClientConfig, ThreadPoolExecutor threadPoolExecutor){
+        this(httpClientConfig);
+        client = client.newBuilder()
+                .dispatcher(dispatcher(threadPoolExecutor))
+                .build();
+    }
 
-
-    public HttpClient(){
+    public HttpClient(HttpClientConfig httpClientConfig){
         client = new OkHttpClient.Builder()
-                .authenticator(authenticator())
                 .dispatcher(dispatcher())
-                .connectTimeout(10, TimeUnit.SECONDS)
-                .writeTimeout(10, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.SECONDS)
+                .connectTimeout(httpClientConfig.getConnectTimeout(), TimeUnit.MILLISECONDS)
+                .writeTimeout(httpClientConfig.getWriteTimeout(), TimeUnit.MILLISECONDS)
+                .readTimeout(httpClientConfig.getReadTimeout(), TimeUnit.MILLISECONDS)
                 .build();
     }
 
@@ -58,11 +61,6 @@ public class HttpClient {
         Request.Builder reqBuilder = new Request.Builder()
                 .url(httpUrl)
                 .post(RequestBody.create(mediaType, body));
-
-        if(Objects.nonNull(userName) && Objects.nonNull(password)){
-            String credential = Credentials.basic(userName, password);
-            reqBuilder.header("Authorization", credential);
-        }
 
         Request request = reqBuilder.build();
 
@@ -84,39 +82,59 @@ public class HttpClient {
     }
 
 
-    private Authenticator authenticator(){
-        Authenticator authenticator = new Authenticator() {
-            @Nullable
-            @Override
-            public Request authenticate(@Nullable Route route, Response response) throws IOException {
-                if (response.request().header("Authorization") != null) {
-                    // Give up, we've already attempted to authenticate.
-                    return null;
-                }
+    public CompletableFuture<Response> postAsync(RequestConfig reqConfig){
 
-                System.out.println("Authenticating for response: " + response);
-                System.out.println("Challenges: " + response.challenges());
+        HttpUrl httpUrl = HttpUrl.parse(reqConfig.getUrl());
 
+        Request.Builder reqBuilder = new Request.Builder()
+                .url(httpUrl)
+                .post(RequestBody.create(reqConfig.getMediaType(), reqConfig.getBody()));
 
-                if(Objects.nonNull(userName) && Objects.nonNull(password)){
-                    String credential = Credentials.basic(userName, password);
-                    return response.request().newBuilder()
-                            .header("Authorization", credential)
-                            .build();
-                }
-                return null;
-            }
-        };
-        return authenticator;
+        if(Objects.nonNull(reqConfig.getUserName()) && Objects.nonNull(reqConfig.getPassword())){
+            String credential = Credentials.basic(reqConfig.getUserName(), reqConfig.getPassword());
+            reqBuilder.header("Authorization", credential);
+        }
+
+        Request request = reqBuilder.build();
+
+        return async(client.newCall(request));
     }
+
+
+
+    public CompletableFuture<Response> postAsync(String url, String body){
+        return postAsync(url,body,MEDIA_TYPE_JSON);
+    }
+
+
+    public CompletableFuture<Response> postAsync(String url, String body, MediaType mediaType){
+
+        HttpUrl httpUrl = HttpUrl.parse(url);
+
+        Request.Builder reqBuilder = new Request.Builder()
+                .url(httpUrl)
+                .post(RequestBody.create(mediaType, body));
+
+        Request request = reqBuilder.build();
+
+        return async(client.newCall(request));
+    }
+
+
 
     private Dispatcher dispatcher(){
-        Dispatcher dispatcher = new Dispatcher();
-        dispatcher.setMaxRequestsPerHost(20);
-        dispatcher.setMaxRequests(300);
-        return dispatcher;
+        ThreadPoolExecutor executorService = new ThreadPoolExecutor(5, 100, 60L, TimeUnit.SECONDS, new SynchronousQueue(), Util
+                .threadFactory("OkHttp Dispatcher", false));
+        return dispatcher(executorService);
     }
 
+    private Dispatcher dispatcher(ThreadPoolExecutor threadPoolExecutor){
+        int maxThread = threadPoolExecutor.getMaximumPoolSize();
+        Dispatcher dispatcher = new Dispatcher(threadPoolExecutor);
+        dispatcher.setMaxRequestsPerHost(maxThread);
+        dispatcher.setMaxRequests(maxThread);
+        return dispatcher;
+    }
 
     public OkHttpClient getClient() {
         return client;
@@ -124,5 +142,33 @@ public class HttpClient {
 
     public void setClient(OkHttpClient client) {
         this.client = client;
+    }
+
+
+    public CompletableFuture<Response> async(Call call){
+
+        CompletableFuture<Response> completedFuture = new CompletableFuture<Response>(){
+            @Override
+            public boolean cancel(boolean mayInterruptIfRunning) {
+                call.cancel();
+                return super.cancel(mayInterruptIfRunning);
+            }
+        };
+
+        okhttp3.Callback callback =  new okhttp3.Callback(){
+            @Override
+            public void onFailure(Call request, IOException e) {
+                completedFuture.completeExceptionally(e);
+            }
+
+            @Override
+            public void onResponse(Call request, Response response) {
+                completedFuture.complete(response);
+            }
+        };
+
+        call.enqueue(callback);
+
+        return completedFuture;
     }
 }

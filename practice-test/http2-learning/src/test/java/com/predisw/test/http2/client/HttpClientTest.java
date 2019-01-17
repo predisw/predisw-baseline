@@ -15,6 +15,9 @@ public class HttpClientTest {
     HttpClient httpClient;
     CallBack callBack;
 
+    HttpClientConfig clientConfig;
+
+
     private void setupCustomTruststore(){
         String truststore = "C:\\WORK\\work\\http2\\http2-client-trust.p12";
         System.setProperty("javax.net.ssl.trustStore",truststore);
@@ -24,7 +27,12 @@ public class HttpClientTest {
 
     @Before
     public void init(){
-        httpClient = new HttpClient();
+        clientConfig = new HttpClientConfig.Builder()
+                .connectTimeout(10000)
+                .readTimeout(30000)
+                .writeTimeout(10000)
+                .build();
+        httpClient = new HttpClient(clientConfig);
         callBack = new CallBack() {
             @Override
             public void onFailure(Request request, Response response, IOException e) {
@@ -75,8 +83,8 @@ public class HttpClientTest {
     @Test
     public void postAsyncHttp2() throws InterruptedException {
         setupCustomTruststore();
-        httpClient = new HttpClient();
-        httpClient.postAsync("https://localhost:5000/","{\"a\":\"b\"}",callBack);
+        httpClient = new HttpClient(clientConfig);
+        httpClient.postAsync("https://localhost:50000/","{\"a\":\"b\"}",callBack);
 
         Thread.sleep(3000);
     }
@@ -84,7 +92,7 @@ public class HttpClientTest {
 
     @Test
     public void postAsyncHttp2Test2() throws InterruptedException {
-        httpClient = new HttpClient();
+        httpClient = new HttpClient(clientConfig);
         httpClient.postAsync("https://http2.akamai.com/demo","{\"a\":\"b\"}",callBack);
 
         Thread.sleep(10000);
@@ -93,9 +101,9 @@ public class HttpClientTest {
     @Test
     public void postAsyncHttp1_1WithNewClient() throws InterruptedException {
         setupCustomTruststore();
-        httpClient = new HttpClient();
+        httpClient = new HttpClient(clientConfig);
         httpClient.getClient().newBuilder().protocols(Arrays.asList(Protocol.HTTP_1_1));
-        httpClient.postAsync("https://localhost:5000/","{\"a\":\"b\"}",callBack);
+        httpClient.postAsync("https://localhost:50000/","{\"a\":\"b\"}",callBack);
 
         Thread.sleep(3000);
     }
@@ -104,7 +112,7 @@ public class HttpClientTest {
     @Test
     public void postAsyncHttp2WithNewClient() throws InterruptedException {
         //setupCustomTruststore();
-        httpClient = new HttpClient();
+        httpClient = new HttpClient(clientConfig);
         httpClient.getClient().newBuilder().protocols(Arrays.asList(Protocol.H2_PRIOR_KNOWLEDGE));
 
         httpClient.postAsync("http://http2.akamai.com/demo","{\"a\":\"b\"}",callBack);

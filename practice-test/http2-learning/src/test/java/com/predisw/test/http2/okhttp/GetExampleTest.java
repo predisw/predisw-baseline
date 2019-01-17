@@ -23,7 +23,7 @@ public class GetExampleTest {
     public void getLocalhostHttp2Server() throws IOException {
         setupCustomTruststore();
         GetExample example = new GetExample();
-        String response = example.runSimpleGet("https://localhost:5000/");
+        String response = example.runSimpleGet("https://localhost:50000/");
         System.out.println(response);
     }
 
@@ -37,7 +37,7 @@ public class GetExampleTest {
     public void getSyncGetToHttp2() throws IOException {
         setupCustomTruststore();
         GetExample example = new GetExample();
-        example.runSyncGet("https://localhost:5000/");
+        example.runSyncGet("https://localhost:50000/");
     }
 
 
@@ -62,7 +62,7 @@ public class GetExampleTest {
     public void getAsyncGetToHttp2() throws IOException, InterruptedException {
         setupCustomTruststore();
         GetExample example = new GetExample();
-        example.runAsyncGet("https://localhost:5000/");
+        example.runAsyncGet("https://localhost:50000/");
         Thread.sleep(3000);
     }
 
