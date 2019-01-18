@@ -1,13 +1,11 @@
 package com.predisw.test.http2.client;
 
 import java.io.IOException;
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import okhttp3.Call;
-import okhttp3.Credentials;
 import okhttp3.Dispatcher;
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
@@ -15,7 +13,10 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 import okhttp3.internal.Util;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HttpClient {
 
@@ -29,6 +30,9 @@ public class HttpClient {
 
     public static final MediaType MEDIA_TYPE_JSON
             = MediaType.parse("application/json; charset=utf-8");
+
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
+
 
     private OkHttpClient client;
 
@@ -82,23 +86,7 @@ public class HttpClient {
     }
 
 
-    public CompletableFuture<Response> postAsync(RequestConfig reqConfig){
 
-        HttpUrl httpUrl = HttpUrl.parse(reqConfig.getUrl());
-
-        Request.Builder reqBuilder = new Request.Builder()
-                .url(httpUrl)
-                .post(RequestBody.create(reqConfig.getMediaType(), reqConfig.getBody()));
-
-        if(Objects.nonNull(reqConfig.getUserName()) && Objects.nonNull(reqConfig.getPassword())){
-            String credential = Credentials.basic(reqConfig.getUserName(), reqConfig.getPassword());
-            reqBuilder.header("Authorization", credential);
-        }
-
-        Request request = reqBuilder.build();
-
-        return async(client.newCall(request));
-    }
 
 
 
@@ -117,10 +105,67 @@ public class HttpClient {
 
         Request request = reqBuilder.build();
 
-        return async(client.newCall(request));
+        return okHttp3Async(client.newCall(request));
     }
 
 
+    public CompletableFuture<Response> postWithResponseAsync(HttpRequest reqConfig){
+
+        HttpUrl httpUrl = HttpUrl.parse(reqConfig.getUrl());
+
+        Request.Builder reqBuilder = new Request.Builder()
+                .url(httpUrl)
+                .post(RequestBody.create(reqConfig.getMediaType(), reqConfig.getBody()));
+
+        Request request = reqBuilder.build();
+
+        return okHttp3Async(client.newCall(request));
+    }
+
+    public void postAsync(HttpRequest httpRequest,CallBack callBack){
+
+    }
+
+
+    public CompletableFuture<HttpResponse> postAsync(HttpRequest httpRequest){
+
+        CompletableFuture<Response> response = postWithResponseAsync(httpRequest);
+
+        CompletableFuture<HttpResponse> httpRes = response.handle((res,ex) -> {
+            if(ex != null){
+                return handleException(ex);
+            }
+            int statusCode = res.code();
+            try (ResponseBody responseBody = res.body()) {
+
+                HttpResponse.Builder builder = new HttpResponse.Builder();
+                builder.statusCode(statusCode);
+
+                String bodyContent = responseBody.string();
+                builder.body(bodyContent);
+
+                return builder.build();
+            }catch (Exception e){
+
+                return handleException(statusCode,e);
+            }
+        });
+
+        return httpRes;
+    }
+
+    private HttpResponse handleException(Throwable th){
+        return handleException(500,th);
+    }
+
+    private HttpResponse handleException(int statusCode, Throwable th){
+        logger.error("",th);
+        HttpResponse httpResponse =  new HttpResponse.Builder()
+                .statusCode(statusCode)
+                .body(th.getMessage())
+                .build();
+        return httpResponse;
+    }
 
     private Dispatcher dispatcher(){
         ThreadPoolExecutor executorService = new ThreadPoolExecutor(5, 100, 60L, TimeUnit.SECONDS, new SynchronousQueue(), Util
@@ -145,7 +190,7 @@ public class HttpClient {
     }
 
 
-    public CompletableFuture<Response> async(Call call){
+    public CompletableFuture<Response> okHttp3Async(Call call){
 
         CompletableFuture<Response> completedFuture = new CompletableFuture<Response>(){
             @Override

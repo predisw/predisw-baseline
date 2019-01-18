@@ -2,11 +2,13 @@ package com.predisw.test.http2.client;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.concurrent.CompletableFuture;
 import okhttp3.Headers;
 import okhttp3.Protocol;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,6 +18,10 @@ public class HttpClientTest {
     CallBack callBack;
 
     HttpClientConfig clientConfig;
+    HttpRequest httpRequestLocalV1_1;
+    HttpRequest httpRequestLocalV2;
+    HttpRequest httpRequestLocalV2c;
+
 
 
     private void setupCustomTruststore(){
@@ -27,6 +33,24 @@ public class HttpClientTest {
 
     @Before
     public void init(){
+
+        httpRequestLocalV1_1 = new HttpRequest.Builder()
+                .url("http://localhost:12306/")
+                .body("{\"a\":\"b\"}")
+                .build();
+
+        httpRequestLocalV2 = new HttpRequest.Builder()
+                .url("https://localhost:50000/")
+                .body("{\"a\":\"b\"}")
+                .mediaType("ddddd")
+                .build();
+
+
+        httpRequestLocalV2c = new HttpRequest.Builder()
+                .url("http://localhost:50000/")
+                .body("{\"a\":\"b\"}")
+                .build();
+
         clientConfig = new HttpClientConfig.Builder()
                 .connectTimeout(10000)
                 .readTimeout(30000)
@@ -73,7 +97,7 @@ public class HttpClientTest {
 
 
     @Test
-    public void postAsyncHttp1() throws InterruptedException {
+    public void postWithResponseAsyncHttp1() throws InterruptedException {
         httpClient.postAsync("http://localhost:12306/","abc",callBack);
 
         Thread.sleep(3000);
@@ -81,7 +105,7 @@ public class HttpClientTest {
 
 
     @Test
-    public void postAsyncHttp2() throws InterruptedException {
+    public void postWithResponseAsyncHttp2() throws InterruptedException {
         setupCustomTruststore();
         httpClient = new HttpClient(clientConfig);
         httpClient.postAsync("https://localhost:50000/","{\"a\":\"b\"}",callBack);
@@ -91,7 +115,7 @@ public class HttpClientTest {
 
 
     @Test
-    public void postAsyncHttp2Test2() throws InterruptedException {
+    public void postWithResponseAsyncHttp2Test2() throws InterruptedException {
         httpClient = new HttpClient(clientConfig);
         httpClient.postAsync("https://http2.akamai.com/demo","{\"a\":\"b\"}",callBack);
 
@@ -99,7 +123,7 @@ public class HttpClientTest {
     }
 
     @Test
-    public void postAsyncHttp1_1WithNewClient() throws InterruptedException {
+    public void postWithResponseAsyncHttp1_1WithNewClient() throws InterruptedException {
         setupCustomTruststore();
         httpClient = new HttpClient(clientConfig);
         httpClient.getClient().newBuilder().protocols(Arrays.asList(Protocol.HTTP_1_1));
@@ -110,7 +134,7 @@ public class HttpClientTest {
 
 
     @Test
-    public void postAsyncHttp2WithNewClient() throws InterruptedException {
+    public void postWithResponseAsyncHttp2WithNewClient() throws InterruptedException {
         //setupCustomTruststore();
         httpClient = new HttpClient(clientConfig);
         httpClient.getClient().newBuilder().protocols(Arrays.asList(Protocol.H2_PRIOR_KNOWLEDGE));
@@ -120,5 +144,90 @@ public class HttpClientTest {
         Thread.sleep(3000);
     }
 
+
+    @Test
+    public void postWithResponseAsync1_1WithRequestConfigTest(){
+
+        HttpRequest httpRequest = new HttpRequest.Builder()
+                .url("http://localhost:12306/")
+                .body("{\"a\":\"b\"}")
+                .build();
+
+        CompletableFuture<Response> future = httpClient.postWithResponseAsync(httpRequest);
+        String resBody = future.thenApply(response -> {
+            String body="";
+            try(ResponseBody responseBody = response.body()){
+                if (!response.isSuccessful()) throw new RuntimeException("Unexpected code " + response);
+                Headers responseHeaders = response.headers();
+                for (int i = 0, size = responseHeaders.size(); i < size; i++) {
+                    System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
+                }
+
+                try {
+                    body = responseBody.string();
+                    System.out.println(body);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return body;
+        }).join();
+
+        System.out.println(resBody);
+
+    }
+
+
+
+    @Test
+    public void postWithAsyncHttp1_1(){
+
+       HttpResponse httpResponse =  httpClient.postAsync(httpRequestLocalV1_1).join();
+
+        System.out.println(httpResponse);
+
+        Assertions.assertThat(httpResponse.getStatusCode()).isEqualTo(200);
+    }
+
+    @Test
+    public void postWithResponseAsyncHttp1_1Test(){
+
+        Response response = httpClient.postWithResponseAsync(httpRequestLocalV1_1).join();
+
+        System.out.println(response);
+
+        Assertions.assertThat(response.code()).isEqualTo(200);
+        Assertions.assertThat(response.protocol()).isEqualTo(Protocol.HTTP_1_1);
+    }
+
+
+    @Test
+    public void postWithResponseAsyncHttp2_Test(){
+        setupCustomTruststore();
+        httpClient = new HttpClient(clientConfig);
+        Response response = httpClient.postWithResponseAsync(httpRequestLocalV2).join();
+
+        System.out.println(response);
+
+        Assertions.assertThat(response.code()).isEqualTo(200);
+        Assertions.assertThat(response.protocol()).isEqualTo(Protocol.HTTP_2);
+    }
+
+
+    @Test
+    public void postWithResponseAsyncHttp2_ClearTextTest(){
+
+        httpClient.setClient(
+                httpClient.getClient()
+                .newBuilder()
+                .protocols(Arrays.asList(Protocol.H2_PRIOR_KNOWLEDGE))
+                .build());
+        Response response = httpClient.postWithResponseAsync(httpRequestLocalV2c).join();
+
+        System.out.println(response);
+
+        Assertions.assertThat(response.code()).isEqualTo(200);
+        Assertions.assertThat(response.protocol()).isEqualTo(Protocol.HTTP_2);
+    }
 
 }
