@@ -1,5 +1,6 @@
 package com.predisw.test.java8;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -16,11 +17,9 @@ public class optional {
     public void OptionalNulltoMap(){
 
         String isNull = null;
-
         Optional result =  Optional.ofNullable(isNull).map(noNull -> noNull.length());
-
-        System.out.println(" what is result ?"+ result);
-        System.out.println(result.isPresent());
+        System.out.println(" what is result ?"+ result);  //Optional.empty
+        System.out.println(result.isPresent());  //false
 
     }
 

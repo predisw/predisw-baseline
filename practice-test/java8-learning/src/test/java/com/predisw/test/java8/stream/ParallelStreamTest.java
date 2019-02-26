@@ -97,7 +97,7 @@ public class ParallelStreamTest {
 
         IntStream.range(0, 10000).forEach(list1::add);
         IntStream.range(0, 10000).parallel().forEach(list2::add);
-        IntStream.range(0, 10000).forEach(i -> {
+        IntStream.range(0, 10000).parallel().forEach(i -> {
             lock.lock();
             try {
                 list3.add(i);
@@ -116,6 +116,51 @@ public class ParallelStreamTest {
         //加锁并行执行的大小：10000
     }
 
+    // parallelStream modify a class if threadSafe
+
+    @Test
+    public void parallelStreamExeThread(){
+
+        List<Integer> list = new ArrayList<>();
+        // 将10000-1存入list中
+        for (int i = 500; i >= 1; i--) {
+            list.add(i);
+        }
+
+        List<Integer> listCopy = Collections.synchronizedList(new ArrayList<>());
+
+        list.stream().parallel().forEach(i -> {
+            System.out.println(Thread.currentThread().getName());
+            listCopy.add(i);
+        });
+
+        System.out.println(listCopy.size());
+
+
+    }
+
+
+    @Test
+    public void parallelStreamAndStreamParallel(){
+
+        List<Integer> list = new ArrayList<>();
+        // 将10000-1存入list中
+        for (int i = 500; i >= 1; i--) {
+            list.add(i);
+        }
+
+        List<Integer> listCopy = Collections.synchronizedList(new ArrayList<>());
+
+        list.stream().parallel().map(i -> {
+            return i*2;
+        }).forEach(i -> {
+            // still is in parallel stream
+            listCopy.add(i);
+        });
+
+        System.out.println(listCopy.size());
+
+    }
 
 
 }

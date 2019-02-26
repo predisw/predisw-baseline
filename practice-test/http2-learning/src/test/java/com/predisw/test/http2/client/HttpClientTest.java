@@ -1,5 +1,7 @@
 package com.predisw.test.http2.client;
 
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
@@ -8,6 +10,7 @@ import okhttp3.Protocol;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import okhttp3.internal.http2.StreamResetException;
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
@@ -201,10 +204,17 @@ public class HttpClientTest {
     }
 
 
+    // mvn clean test -Dtest=HttpClientTest#postWithResponseAsyncHttp2_Test
     @Test
     public void postWithResponseAsyncHttp2_Test(){
         setupCustomTruststore();
         httpClient = new HttpClient(clientConfig);
+        httpClient.setClient(
+                httpClient.getClient()
+                        .newBuilder()
+                        .protocols(Arrays.asList(Protocol.HTTP_2,Protocol.HTTP_1_1))
+                        .build()
+        );
         Response response = httpClient.postWithResponseAsync(httpRequestLocalV2).join();
 
         System.out.println(response);
@@ -215,19 +225,50 @@ public class HttpClientTest {
 
 
     @Test
-    public void postWithResponseAsyncHttp2_ClearTextTest(){
+    public void postWithResponseAsyncHttp2_ClearTextTestToHttp2Server(){
 
         httpClient.setClient(
                 httpClient.getClient()
                 .newBuilder()
                 .protocols(Arrays.asList(Protocol.H2_PRIOR_KNOWLEDGE))
                 .build());
-        Response response = httpClient.postWithResponseAsync(httpRequestLocalV2c).join();
 
-        System.out.println(response);
+        try{
+            httpClient.postWithResponseAsync(httpRequestLocalV2c).join();
+            fail("should not reach here");
+        }catch (Exception e){
+            System.out.println("-------------Client Exception -------------");
 
-        Assertions.assertThat(response.code()).isEqualTo(200);
-        Assertions.assertThat(response.protocol()).isEqualTo(Protocol.HTTP_2);
+            e.printStackTrace();
+            Assertions.assertThat(e).isInstanceOf(StreamResetException.class);
+            Assertions.assertThat(e).hasMessageContaining("PROTOCOL_ERROR");
+        }
+
     }
+
+    @Test
+    public void postWithResponseAsyncHttp2_ClearTextTestToHttp1_1Server(){
+
+        httpClient.setClient(
+                httpClient.getClient()
+                        .newBuilder()
+                        .protocols(Arrays.asList(Protocol.H2_PRIOR_KNOWLEDGE))
+                        .build());
+
+        try{
+            httpClient.postWithResponseAsync(httpRequestLocalV1_1).join();
+            fail("should not reach here");
+        }catch (Exception e){
+            System.out.println("-------------Client Exception -------------");
+
+            e.printStackTrace();
+            Assertions.assertThat(e).isInstanceOf(StreamResetException.class);
+            Assertions.assertThat(e).hasMessageContaining("PROTOCOL_ERROR");
+
+        }
+
+
+    }
+
 
 }

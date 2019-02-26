@@ -13,7 +13,17 @@ import java.util.stream.IntStream;
 
 import java.util.stream.Stream;
 
-public class StreamT1 {
+public class StreamCommonTest {
+
+
+    @Test
+    public void distinctTest(){
+        List<Integer> numbers = Arrays.asList(new Integer(1), new Integer(2), 3,3,1,10);
+
+        numbers.stream().distinct().forEach(n -> System.out.println(n));
+
+    }
+
 
 
 
