@@ -1,6 +1,10 @@
 package com.predisw.test.java8.lambda;
 
+import static java.util.Comparator.comparingInt;
+
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import org.assertj.core.api.Assertions;
@@ -17,7 +21,13 @@ public class LambdaT1 {
         features.forEach(n -> System.out.println(n));
 
         features.forEach((n)-> System.out.println(n));
+
+        Collections.sort(features, comparingInt(String::length));
+
     }
+
+
+
 
 
     @Test

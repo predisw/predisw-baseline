@@ -24,6 +24,12 @@ public class TempT<T extends MockitoT> {
 
     public static void main(String [] args){
 
+        String userId = "123456789";
+        long id = userId.length() > 8 ? Long.valueOf(userId.substring(8)):Long.valueOf(userId);
+
+        System.out.println(id);
+
+
         System.out.println("3168".equals(3168));
 
         System.out.println(Integer.valueOf(3168).equals(3168));
