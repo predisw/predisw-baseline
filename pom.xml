@@ -36,6 +36,8 @@
         <hikariCP.version>3.2.0</hikariCP.version>
 
         <assertj.version>2.6.0</assertj.version>
+        <powermock.version>1.7.1</powermock.version>
+
         <cassandra-driver.version>3.11.0</cassandra-driver.version>
       <!--<mysql-connector.version>8.0.15</mysql-connector.version>
           there is a bug this version which like change the condition from 2018-06-19 to 2018-06-18
@@ -540,6 +542,26 @@
             <groupId>com.github.dreamhead</groupId>
             <artifactId>moco-core</artifactId>
             <version>${moco.version}</version>
+            <scope>test</scope>
+          </dependency>
+
+
+          <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-mockito</artifactId>
+            <version>${powermock.version}</version>
+            <scope>test</scope>
+          </dependency>
+          <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+            <version>${powermock.version}</version>
+            <scope>test</scope>
+          </dependency>
+          <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-core</artifactId>
+            <version>${powermock.version}</version>
             <scope>test</scope>
           </dependency>
 
