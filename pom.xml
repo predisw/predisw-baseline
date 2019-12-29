@@ -85,7 +85,7 @@
         <moco.version>0.11.1</moco.version>
 
         <junit.version>4.12</junit.version>
-        <mockito.version>1.10.19</mockito.version>
+        <mockito.version>2.25.0</mockito.version>
 
         <slf4j.version>1.7.25</slf4j.version>
         <log4j2.version>2.7</log4j2.version>
