@@ -45,7 +45,7 @@
       <!--<mysql-connector.version>8.0.15</mysql-connector.version>
           there is a bug this version which like change the condition from 2018-06-19 to 2018-06-18
       -->
-        <mysql-connector.version>5.1.46</mysql-connector.version>
+        <mysql-connector.version>8.0.16</mysql-connector.version>
 
         <jython.version>2.7.0</jython.version>
 
