@@ -80,7 +80,7 @@
         <jdom2.version>2.0.6</jdom2.version>
 
         <tomcat.version>8.5.15</tomcat.version>
-        <undertow.version>2.0.21.Final</undertow.version>
+        <undertow.version>2.0.28.Final</undertow.version>
         <!-- the property set for springBoot  -->
         <servlet-api.version>4.0.0</servlet-api.version>
 
